@@ -20,4 +20,5 @@ def tasar():
     return jsonify({"precio": int(precio_final)})
 
 if _name_ == '_main_':
+    # Esta línea es la que Render necesita para arrancar
     app.run(host='0.0.0.0', port=5000)
