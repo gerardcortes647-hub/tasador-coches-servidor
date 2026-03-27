@@ -6,32 +6,39 @@ CORS(app)
 
 @app.route('/tasar', methods=['POST'])
 def tasar():
-    # Recibimos todos los datos nuevos
+    # Recibimos los nuevos datos
     km = int(request.form.get('kilometros', 0))
     estado = request.form.get('estado', 'Bueno')
-    marca = request.form.get('marca', 'Genérico')
+    marca = request.form.get('marca', 'Toyota')
     combustible = request.form.get('combustible', 'Gasolina')
-    anio = int(request.form.get('anio', 2015))
+    anio = int(request.form.get('anio', 2020))
 
-    # 1. Precio base según la Marca (Vanguardista)
-    maras_premium = {"BMW": 25000, "Mercedes": 27000, "Audi": 24000, "Tesla": 35000}
-    precio_base = maras_premium.get(marca, 15000)
+    # 1. Precio base por Marca
+    precios_base = {
+        "BMW": 25000, "Mercedes": 27000, "Audi": 24000, 
+        "Tesla": 35000, "Toyota": 18000, "Seat": 15000
+    }
+    precio = precios_base.get(marca, 15000)
 
-    # 2. Ajuste por Año (un coche nuevo vale más)
+    # 2. Ajuste por antigüedad (2026 es el año actual)
     antiguedad = 2026 - anio
-    precio_base -= (antiguedad * 1000)
+    precio -= (antiguedad * 1200)
 
-    # 3. Ajuste por Kilometraje
-    precio_base -= (km * 0.05)
+    # 3. Ajuste por KM
+    precio -= (km * 0.04)
 
-    # 4. Bonus por combustible "Eco"
-    if combustible in ["Eléctrico", "Híbrido"]:
-        precio_base += 3000
+    # 4. Bonus por combustible ECO
+    if combustible in ["Híbrido", "Eléctrico"]:
+        precio += 3500
 
-    # 5. Ajuste por Estado
+    # 5. Ajuste por estado
     if "Averiado" in estado:
-        precio_final = 500
+        precio = 800
     else:
-        precio_final = max(1000, precio_base)
+        # Aseguramos un precio mínimo de 1000€ si no está averiado
+        precio = max(1000, precio)
 
-    return jsonify({"precio": int(precio_final)})
+    return jsonify({"precio": int(precio)})
+
+if _name_ == '_main_':
+    app.run(host='0.0.0.0', port=5000)
