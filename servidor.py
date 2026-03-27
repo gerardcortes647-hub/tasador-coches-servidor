@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-app = Flask(_name_)
+app = Flask(__name__)
 CORS(app)
 
 @app.route('/tasar', methods=['POST'])
@@ -19,6 +19,6 @@ def tasar():
 
     return jsonify({"precio": int(precio_final)})
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     # Esta línea es la que Render necesita para arrancar
     app.run(host='0.0.0.0', port=5000)
